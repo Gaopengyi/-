@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <title>抗战历程(百度地图)</title>
+    <link rel = "Shortcut Icon" href=./img/China.png>
+    <link rel="stylesheet" href="./css/leaflet.css">
+</head>
+<body style="height: 100%; margin: 0">
+<div id="map" style="height: 100%"></div>
+<script type="text/javascript" src="./js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+<!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>-->
+<!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>-->
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+<script type="text/javascript" src = "./js/kangjson.js"></script>
+<!--<script src = "./js/myMap2.js"></script>-->
+<script type="text/javascript">
+    var dom = document.getElementById("map");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+
+
+    var geoCoordMap = {
+        '上海': [121.4453, 31.2234],
+        '齐齐哈尔': [123.9179, 47.3543],
+        '洮南': [122.7863, 45.3355],
+        '山海关': [119.7600, 40.0109],
+        '喜峰口': [118.3552, 40.4173],
+        '承德市': [117.9634, 40.9515],
+        '呼和浩特': [111.7519, 40.8414],
+        '卢沟桥': [116.2251, 39.8514],
+        '台儿庄': [117.3219, 34.8107],
+        '兰考县': [114.8211, 34.8223],
+        '德安县': [115.7560, 29.3134],
+        '广东': [113.2662, 23.1317],
+        '南昌': [115.8579, 28.6820],
+        '随县': [113.2999, 31.8538],
+        '钦州': [108.6492, 21.9379],
+        '枣阳': [112.7739, 32.1283],
+        '宜昌': [111.2864, 30.6918],
+        '光山县': [114.9187, 32.0099],
+        '上高县': [114.9248, 28.2333],
+        '衡阳': [112.5719, 26.8932],
+        '桂林': [110.2900, 25.2736],
+        '巴达布朗族哈尼族乡': [100.0589, 21.8551],
+        '缅甸北部': [99.8382, 21.7748],
+        '缅甸密支那': [97.1081, 25.1104],
+        '腾冲': [98.4909,  25.0205],
+        '新野县': [112.3626, 32.5074],
+        '襄阳': [112.1813, 31.9428],
+        '怀化': [110.0170, 27.3717],
+        '龙州县': [106.8545, 22.3426],
+        '南丹县': [107.5422, 24.9753],
+        '全州县': [111.0730, 25.9286],
+        '南阳': [112.5460, 32.9735],
+        '贵阳': [106.6755, 26.6183],
+        '韶关': [113.5742, 24.8141],
+        '东莞': [113.8953, 22.901],
+        '东营': [118.7073, 37.5513],
+        '中山': [113.4229, 22.478],
+        '临汾': [111.4783, 36.1615],
+        '临沂': [118.3118, 35.2936],
+        '丹东': [124.541, 40.4242],
+        '丽水': [119.5642, 28.1854],
+        '乌鲁木齐': [87.9236, 43.5883],
+        '佛山': [112.8955, 23.1097],
+        '保定': [115.0488, 39.0948],
+        '兰州': [103.5901, 36.3043],
+        '包头': [110.3467, 41.4899],
+        '北京': [116.3974, 39.9088],
+        '北海': [109.314, 21.6211],
+        '南京': [118.8062, 31.9208],
+        '南宁': [108.479, 23.1152],
+        '南昌': [116.0046, 28.6633],
+        '南通': [121.1023, 32.1625],
+        '厦门': [118.1689, 24.6478],
+        '台州': [121.1353, 28.6688],
+        '合肥': [117.29, 32.0581],
+        '呼和浩特': [111.4124, 40.4901],
+        '咸阳': [108.4131, 34.8706],
+        '哈尔滨': [127.9688, 45.368],
+        '唐山': [118.4766, 39.6826],
+        '嘉兴': [120.9155, 30.6354],
+        '大同': [113.7854, 39.8035],
+        '大连': [122.2229, 39.4409],
+        '天津': [117.4219, 39.4189],
+        '太原': [112.3352, 37.9413],
+        '常德': [111.6985, 29.0315],
+        '宁波': [121.5967, 29.6466],
+        '宝鸡': [107.1826, 34.3433],
+        '宿迁': [118.5535, 33.7775],
+        '常州': [119.4543, 31.5582],
+        '广州': [113.5107, 23.2196],
+        '廊坊': [116.521, 39.0509],
+        '延安': [109.1052, 36.4252],
+        '张家口': [115.1477, 40.8527],
+        '徐州': [117.5208, 34.3268],
+        '德州': [116.6858, 37.2107],
+        '惠州': [114.6204, 23.1647],
+        '成都': [103.9526, 30.7617],
+        '扬州': [119.4653, 32.8162],
+        '承德': [117.5757, 41.4075],
+        '昆明': [102.9199, 25.4663],
+        '杭州': [119.5313, 29.8773],
+        '枣庄': [117.323, 34.8926],
+        '柳州': [109.3799, 24.9774],
+        '株洲': [113.5327, 27.0319],
+        '武汉': [114.3896, 30.6628],
+        '汕头': [117.1692, 23.3405],
+        '江门': [112.6318, 22.1484],
+        '沈阳': [123.1238, 42.1216],
+        '沧州': [116.8286, 38.2104],
+        '淮安': [118.927, 33.4039],
+        '温州': [120.498, 27.8119],
+        '玉溪': [101.9312, 23.8898],
+        '珠海': [113.7305, 22.1155],
+        '盐城': [120.2234, 33.5577],
+        '石家庄': [114.4995, 38.1006],
+        '福州': [119.4543, 25.9222],
+        '长沙': [112.9388, 28.2277],
+        '绍兴': [120.5643, 29.7565],
+        '舟山': [122.2559, 30.2234],
+        '苏州': [120.6519, 31.3989],
+        '衡水': [115.8838, 37.7161],
+        '衢州': [118.6853, 28.8666],
+        '西宁': [101.4038, 36.8207],
+        '西安': [109.1162, 34.2004],
+        '贵阳': [106.6992, 26.7682],
+        '邢台': [114.8071, 37.2821],
+        '邯郸': [114.4775, 36.535],
+        '郑州': [113.4668, 34.6234],
+        '韶关': [113.7964, 24.7028],
+        '运城': [111.0069, 35.0262],
+        '衡阳': [112.5719, 26.8932],
+        '东京湾': [139.7815, 35.4414]
+    };
+    var planePath = 'triangle';
+    var convertData = function (data) {
+        var res = [];
+        for (var i = 0; i < data.length; i++) {
+            var dataItem = data[i];
+            var fromCoord = geoCoordMap[dataItem[0].name];
+            var toCoord = geoCoordMap[dataItem[1].name];
+            if (fromCoord && toCoord) {
+                res.push([{
+                    coord: fromCoord
+                }, {
+                    coord: toCoord
+                }]);
+            }
+        }
+        return res;
+    };
+    var color = "#e4ff00";
+
+    // 地图数据的制作
+    var dataList = [];
+    var oN = {name: ""};
+    var oNV = {name: "", value: ""};
+    var iOlist = [];
+    var iLlist = [];
+    var secondList = [];
+    for (var c = 0; c < jsonData.length-1; c++) {
+        secondList = [];
+        iLlist = [];
+        var site = jsonData[c].site;
+        var nextSite = jsonData[c+1].site;
+        if ($.isArray(site)) {
+            for (var d = 0; d < site.length; d++) {
+                if ($.isArray(nextSite)){
+                    for (var e = 0; e < nextSite.length; e++) {
+                        // 多对多
+                        iOlist = [];
+                        oN = {};
+                        oNV = {};
+                        oN['name'] = site[d];
+                        oNV['name'] = nextSite[e];
+                        oNV['value'] = 90;
+                        iOlist.push(oN);
+                        iOlist.push(oNV);
+                        iLlist.push(iOlist);
+                    }
+                } else {
+                    // 多对一
+                    iOlist = [];
+                    oN = {};
+                    oNV = {};
+                    oN['name'] = site[d];
+                    oNV['name'] = nextSite;
+                    oNV['value'] = 90;
+                    iOlist.push(oN);
+                    iOlist.push(oNV);
+                    iLlist.push(iOlist);
+                }
+            }
+        } else {
+            if ($.isArray(nextSite)){
+                for (var e = 0; e < nextSite.length; e++) {
+                    // 一对多
+                    iOlist = [];
+                    oN = {};
+                    oNV = {};
+                    oN['name'] = site;
+                    oNV['name'] = nextSite[e];
+                    oNV['value'] = 90;
+                    iOlist.push(oN);
+                    iOlist.push(oNV);
+                    iLlist.push(iOlist);
+                }
+            } else{
+                // 一对一
+                iOlist = [];
+                oN = {};
+                oNV = {};
+                oN['name'] = site;
+                oNV['name'] = nextSite;
+                oNV['value'] = 90;
+                iOlist.push(oN);
+                iOlist.push(oNV);
+                iLlist.push(iOlist);
+            }
+        }
+        // iLlist.push(iOlist);
+        secondList.push(site);
+        secondList.push(iLlist);
+        dataList.push(secondList);
+    }
+    dataList.unshift(["东京湾",[[{name:"东京湾"},{name:"齐齐哈尔", value: 90}]]]);
+    var serice = [["东京湾",[[{name:"东京湾"},{name:"齐齐哈尔", value: 90}]]]];
+    // 地图的所有数据的循环生成
+    for (var i = 0; i < jsonData.length; i++) {
+        var contents = jsonData[i].content;
+        for (var j = 0; j < contents.length ; j++) {
+            if (j >0 && j / 25 ==0){
+                contents[j] = contents[j] + "\n";
+            }
+        }
+    }
+    option = {
+        baseOption:{
+            timeline: {
+                axisType: 'category',
+                orient: 'vertical',
+                autoPlay: true,
+                inverse: true,
+                playInterval: 2500,
+                left: null,
+                right: 20,
+                top: 20,
+                bottom: 20,
+                width: 55,
+                height: null,
+                label: {
+                    normal: {
+                        textStyle: {
+                            color: '#999'
+                        }
+                    },
+                    emphasis: {
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    }
+                },
+                symbol: 'none',
+                lineStyle: {
+                    color: '#555'
+                },
+                checkpointStyle: {
+                    color: '#bbb',
+                    borderColor: '#777',
+                    borderWidth: 2
+                },
+                controlStyle: {
+                    showNextBtn: false,
+                    showPrevBtn: false,
+                    normal: {
+                        color: '#666',
+                        borderColor: '#666'
+                    },
+                    emphasis: {
+                        color: '#aaa',
+                        borderColor: '#aaa'
+                    }
+                },
+                data: []
+            },
+            title: [],
+            bmap: {
+                // center: [104.114129, 37.550339],
+                // center: [104.114129, 37.550339],
+                zoom: 5,
+                roam: true,
+                mapStyle: {
+                    styleJson: [
+                        {
+                            "featureType": "water",
+                            "elementType": "all",
+                            "stylers": {
+                                "color": "#044161"
+                            }
+                        },
+                        {
+                            "featureType": "land",
+                            "elementType": "all",
+                            "stylers": {
+                                "color": "#004981"
+                            }
+                        },
+                        {
+                            "featureType": "boundary",
+                            "elementType": "geometry",
+                            "stylers": {
+                                "color": "#064f85"
+                            }
+                        },
+                        {
+                            "featureType": "railway",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "highway",
+                            "elementType": "geometry",
+                            "stylers": {
+                                "color": "#004981"
+                            }
+                        },
+                        {
+                            "featureType": "highway",
+                            "elementType": "geometry.fill",
+                            "stylers": {
+                                "color": "#005b96",
+                                "lightness": 1
+                            }
+                        },
+                        {
+                            "featureType": "highway",
+                            "elementType": "labels",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "arterial",
+                            "elementType": "geometry",
+                            "stylers": {
+                                "color": "#004981"
+                            }
+                        },
+                        {
+                            "featureType": "arterial",
+                            "elementType": "geometry.fill",
+                            "stylers": {
+                                "color": "#00508b"
+                            }
+                        },
+                        {
+                            "featureType": "poi",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "green",
+                            "elementType": "all",
+                            "stylers": {
+                                "color": "#056197",
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "subway",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "manmade",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "local",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "arterial",
+                            "elementType": "labels",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        },
+                        {
+                            "featureType": "boundary",
+                            "elementType": "geometry.fill",
+                            "stylers": {
+                                "color": "#029fd4"
+                            }
+                        },
+                        {
+                            "featureType": "building",
+                            "elementType": "all",
+                            "stylers": {
+                                "color": "#1a5787"
+                            }
+                        },
+                        {
+                            "featureType": "label",
+                            "elementType": "all",
+                            "stylers": {
+                                "visibility": "off"
+                            }
+                        }
+                    ]
+                }
+            },
+            grid: [
+                // 中国胜，日本胜 平
+                // {x2: '7%', y: '65%', width: '18%', height: '18%'},
+                // 中日总兵力。损伤人数
+                {x2: '7%', y: '15%', width: '18%', height: '18%'},
+                // 中日总损伤人数
+                {x: '5%', y: '76%', width: '90%', height: '20%'}
+            ],
+            calculable : true,
+            xAxis : [
+                // {
+                //     splitLine:{show: false},
+                //     // splitArea : {show : true},
+                //     gridIndex: 0,
+                //     type : 'category',
+                //     data :['中国胜 ', '平', '日本胜'],
+                //     axisLine: {
+                //         lineStyle: {
+                //             color: '#e2e2e2' //坐标轴线颜色
+                //         }
+                //     }
+                // },
+                {
+                    splitLine:{show: false},
+                    // splitArea : {show : true},
+                    gridIndex: 0,
+                    type : 'category',
+                    data : ['中国','日本'],
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e2e2e2' //坐标轴线颜色
+                        }
+                    }
+                },
+                {
+                    splitLine:{show: false},
+                    // splitArea : {show : true},
+                    gridIndex: 1,
+                    type : 'category',
+                    data: [],
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e2e2e2' //坐标轴线颜色
+                        }
+                    }
+                }
+
+            ],
+            yAxis : [
+                // {
+                //     splitLine:{show: false},
+                //     gridIndex: 0,
+                //     // 控制时间轴刻度没有小数点
+                //     minInterval:1,
+                //     type : 'value',
+                //     axisLine: {
+                //         lineStyle: {
+                //             color: '#e2e2e2' //坐标轴线颜色
+                //         }
+                //     }
+                // },
+                {
+                    splitLine:{show: false},
+                    gridIndex: 0,
+                    // 控制时间轴刻度没有小数点
+                    minInterval:1,
+                    type : 'value',
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e2e2e2' //坐标轴线颜色
+                        }
+                    }
+                },
+                {
+                    splitLine:{show: false},
+                    gridIndex: 1,
+                    // 控制时间轴刻度没有小数点
+                    minInterval:1,
+                    type : 'value',
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e2e2e2'  //坐标轴线颜色
+                        }
+                    }
+                }
+            ],
+            label: [
+                {
+                    normal: {
+                        show: true,
+                        position: 'inside',
+                        color: "#000"
+                    }
+                },
+                {
+                    normal: {
+                        show: true,
+                        position: 'inside',
+                        color: "#000"
+                    }
+                },
+                {
+                    normal: {
+                        show: true
+                    },
+                    emphasis: {
+                        show: false
+                    }
+                }
+
+            ],
+            barWidth:20,
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: [
+                {
+                    orient: 'horizontal',
+                    right: 100,
+                    top: 500,
+                    data:['中国','平','日本'],
+                    textStyle:{//图例文字的样式
+                        color:'#ccc',
+                        fontSize:16
+                    }
+                },
+                {
+                    orient: 'horizontal',
+                    right: 100,
+                    top: 80,
+                    data:['总兵力','伤亡数量'],
+                    textStyle:{//图例文字的样式
+                        color:'#ccc',
+                        fontSize:16
+                    }
+                },
+                {
+                    orient: 'vertical',
+                    left: 100,
+                    bottom: 250,
+                    data:['中国总伤亡数','日本总伤亡数'],
+                    textStyle:{//图例文字的样式
+                        color:'#ccc',
+                        fontSize:16
+                    }
+                },
+
+            ],
+            series: []
+        },
+        options: []
+    };
+    // 搞折线图的数据
+    let CList = [];
+    let JList = [];
+    let timeDataList = [];
+    let CresList = [];
+    let JresList = [];
+    for (let j = 0; j < jsonData.length; j++) {
+        CList.push(jsonData[j].ChinaAllLosses);
+        CresList.push(CList.slice(0,j+1));
+        JList.push(jsonData[j].JapAllLosses);
+        JresList.push(JList.slice(0,j+1));
+    }
+    // 时间轴构成多个options
+    for (let z = 0; z < jsonData.length; z++) {
+        option.baseOption.timeline.data = timeDataList;
+        option.baseOption.xAxis[1].data = timeDataList;
+
+        timeDataList.push(jsonData[z].startTime);
+
+        option.options.push({
+
+            title: [{
+                textAlign: 'left',
+                text: "中国" + "       " + "平" + "       " + "日本",
+                left: '73%',
+                top: '56%',
+                textStyle: {
+                    fontFamily: 'KaiTi',
+                    fontSize: 30,
+                    color: '#fdfdff'
+                }
+            },
+                {
+                    textAlign: 'center',
+                    left: '74.8%',
+                    top: '68%',
+                    textStyle: {
+                        fontFamily: 'KaiTi',
+                        fontSize: 30,
+                        color: '#ffdc00'
+                    },
+                    show: true,
+                    text: jsonData[z].china
+                },
+                {
+                    textAlign: 'center',
+                    left: '82.7%',
+                    top: '68%',
+                    textStyle: {
+                        fontFamily: 'KaiTi',
+                        fontSize: 30,
+                        color: '#ffdc00'
+                    },
+                    show: true,
+                    text: jsonData[z].peace
+                },
+                {
+                    textAlign: 'center',
+                    left: '90.7%',
+                    top: '68%',
+                    textStyle: {
+                        fontFamily: 'KaiTi',
+                        fontSize: 30,
+                        color: '#ffdc00'
+                    },
+                    show: true,
+                    text: jsonData[z].Japanese
+                },
+                {
+                    textAlign: 'center',
+                    left: '50%',
+                    top: '15%',
+                    textStyle: {
+                        fontSize: 30,
+                        color: '#a7fffd'
+                    },
+                    show: true,
+                    text: "胜方" + ":" +jsonData[z].winner + ''
+                },
+                {
+                    textAlign: 'center',
+                    left: '50%',
+                    top: '5%',
+                    show: true,
+                    textStyle: {
+                        fontFamily: 'KaiTi',
+                        fontSize: 50,
+                        color: '#00fff3'
+                    },
+                    'text': jsonData[z].warname + ''
+                },
+                {
+                    // textAlign: 'center',
+                    left: '5%',
+                    top: '7%',
+                    width: 300,
+                    show: true,
+                    // backgroundColor: 'rgba(128, 106, 12, 0.4)',
+                    textStyle: {
+                        fontSize: 15,
+                        fontFamily: 'KaiTi',
+                        color: '#cccccc'
+                    },
+                    'text': jsonData[z].content + ''
+                },
+                {
+                    // textAlign: 'center',
+                    left: '15%',
+                    top: '3%',
+                    width: 300,
+                    show: true,
+                    // backgroundColor: 'rgba(128, 106, 12, 0.4)',
+                    textStyle: {
+                        fontSize: 20,
+                        fontFamily: 'KaiTi',
+                        color: '#f8f8f8'
+                    },
+                    text: '战争简介' + ''
+                },
+                {
+                    // textAlign: 'center',
+                    left: '80%',
+                    top: '8%',
+                    width: 300,
+                    show: true,
+                    // backgroundColor: 'rgba(128, 106, 12, 0.4)',
+                    textStyle: {
+                        fontSize: 25,
+                        fontFamily: 'KaiTi',
+                        color: '#f8f8f8'
+                    },
+                    text: '战况' + ''
+                },
+                // {
+                //     // textAlign: 'center',
+                //     left: '15%',
+                //     top: '80%',
+                //     width: 300,
+                //     show: true,
+                //     // backgroundColor: 'rgba(128, 106, 12, 0.4)',
+                //     textStyle: {
+                //         fontSize: 90,
+                //         // fontFamily: 'KaiTi',
+                //         color: 'rgba(0, 0, 0, 0.6)'
+                //     },
+                //     text: jsonData[z].startTime + ''
+                // }
+            ],
+            series:[
+                // 线下的轨迹配置
+                {
+                    name: dataList[z][0] + ' ',
+                    type: 'lines',
+                    coordinateSystem: 'bmap',
+                    zlevel: 1,
+                    effect: {
+                        show: true,
+                        period: 1.5,
+                        trailLength: 0.3,
+                        color: color,
+                        symbolSize: 5
+                    },
+                    lineStyle: {
+                        normal: {
+                            color: color[0],
+                            width: 0,
+                            curveness: 0.2
+                        }
+                    },
+                    data: convertData(dataList[z][1])
+                },
+                // 小箭头的配置
+                {
+                    name: dataList[z][0] + '',
+                    type: 'lines',
+                    coordinateSystem: 'bmap',
+                    zlevel: 2,
+                    effect: {
+                        show: true,
+                        period: 1.5,
+                        trailLength: 0,
+                        symbol: planePath,
+                        symbolSize: 10
+                    },
+                    lineStyle: {
+                        normal: {
+                            color: color,
+                            width: 1,
+                            opacity: 0.4,
+                            curveness: 0.2
+                        }
+                    },
+                    data: convertData(dataList[z][1])
+                },
+                // 配置地区名称
+                {
+                    name: jsonData[z].warname,
+                    // name: dataItem[1].name.name,
+                    type: 'effectScatter',
+                    coordinateSystem: 'bmap',
+                    zlevel: 2,
+                    rippleEffect: {
+                        brushType: 'stroke'
+                    },
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'right',
+                            formatter: '{b}'
+                        }
+                    },
+                    symbolSize: function (val) {
+                        return val[2] / 8;
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: color
+                        }
+                    },
+                    data: dataList[z][1].map(function (dataItem) {
+                        return {
+                            name: dataItem[1].name,
+                            value: geoCoordMap[dataItem[1].name].concat([dataItem[1].value])
+                        };
+                    }),
+                    // data :{
+                    //     name: jsonData[z].warname,
+                    //     value: geoCoordMap[dataList[z][1][1].name].concat([dataList[z][1][1].value])
+                    // }
+                },
+                // {
+                //     name:'中国胜',
+                //     type:'bar',
+                //     xAxisIndex: 0,
+                //     yAxisIndex: 0,
+                //     data: [jsonData[z].china, 0, 0],
+                //     itemStyle: {
+                //         normal: {
+                //             barBorderRadius:[5, 5, 0, 0],
+                //             //这里用函数控制柱子颜色，定义一个list，然后根据所以取得不同的值
+                //             color: '#ffa300'
+                //         }
+                //     }
+                // },
+                // {
+                //     name:'平',
+                //     type:'bar',
+                //     xAxisIndex: 0,
+                //     yAxisIndex: 0,
+                //     data: [0, jsonData[z].peace, 0],
+                //     itemStyle: {
+                //         normal: {
+                //             barBorderRadius:[5, 5, 0, 0],
+                //             //这里用函数控制柱子颜色，定义一个list，然后根据所以取得不同的值
+                //             color: '#bcffc2'
+                //         }
+                //     }
+                // },
+                // {
+                //     name:'日本胜',
+                //     type:'bar',
+                //     xAxisIndex: 0,
+                //     yAxisIndex: 0,
+                //     data: [0, 0, jsonData[z].Japanese],
+                //     itemStyle: {
+                //         normal: {
+                //             barBorderRadius:[5, 5, 0, 0],
+                //             //这里用函数控制柱子颜色，定义一个list，然后根据所以取得不同的值
+                //             color: "#5efdff"
+                //
+                //         }
+                //     }
+                // },
+
+                {
+                    name:'总兵力',
+                    type:'bar',
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                    data: [jsonData[z].ChinaCount, jsonData[z].JapCount],
+                    itemStyle: {
+                        normal: {
+                            barBorderRadius:[5, 5, 0, 0],
+                            //这里用函数控制柱子颜色，定义一个list，然后根据所以取得不同的值
+                            color: '#48ff00'
+                        }
+                    }
+                },
+                {
+                    name:'伤亡数量',
+                    type:'bar',
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                    data: [jsonData[z].ChinaLosses, jsonData[z].JapLosses],
+                    itemStyle: {
+                        normal: {
+                            // 柱形图圆角，初始化效果
+                            barBorderRadius:[5, 5, 0, 0],
+                            //这里用函数控制柱子颜色，定义一个list，然后根据所以取得不同的值
+                            color: '#f00a10'
+                        }
+                    },
+                },
+                {
+                    name:"中国总伤亡数",
+                    data: CresList[z],
+                    type: 'line',
+                    xAxisIndex: 1,
+                    yAxisIndex: 1,
+                    // smooth: true,
+                    itemStyle: {
+                        normal: {
+                            //这里用函数控制柱子颜色，定义一个list，然后根据所以取得不同的值
+                            color: '#ffa300'
+                        }
+                    }
+                },
+                {
+                    xAxisIndex: 1,
+                    yAxisIndex: 1,
+                    name: "日本总伤亡数",
+                    data: JresList[z],
+                    type: 'line',
+                    // smooth: true,
+                    itemStyle: {
+                        normal: {
+                            //这里用函数控制柱子颜色，定义一个list，然后根据所以取得不同的值
+                            color: '#5efdff'
+                        }
+                    }
+                },
+
+                /* 1仪表盘图，做中间刻度线 1*/
+                {
+                    type: 'gauge',
+                    name: '业务指标',
+                    radius:'10%',
+                    startAngle:'0',
+                    endAngle:'-359.99',
+                    center: ['75%', '70%'],
+                    splitNumber:'100',
+                    pointer:{
+                        show:false
+                    },
+                    title:{
+                        show:false
+                    },
+                    detail: {
+                        show:false
+                    },
+                    data: [{value: 0.1, name: '完成率'}],
+                    axisLine:{
+                        lineStyle: {
+                            color:[[1,new echarts.graphic.LinearGradient(0, 0, 1, 1, [{
+                                offset: 0,
+                                color: '#fff59d'
+                            }, {
+                                offset: 0.5,
+                                color: '#ffeb86'
+                            }, {
+                                offset:1,
+                                color: '#ff6c00'
+                            }])]],
+                            width: 10,
+                            opacity: 1
+                        }
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    splitLine: {
+                        show: true,
+                        length:10,
+                        lineStyle: {
+                            color: '#ffb7ab',
+                            width: 1,
+                            type: 'solid',
+                        },
+                    },
+                    axisLabel: {
+                        show: false
+                    }
+                },
+                /* 1外层环形图，展示详细占比 1*/
+                {
+                    name: 'pie',
+                    type: 'pie',
+                    clockWise: true,
+                    startAngle:-270,
+                    radius: ['10%', '13%'],
+                    hoverAnimation: false,
+                    center: ['75%', '70%'],
+                    data: [{
+                        value: jsonData[z].china,
+                        name:'中国',
+                        itemStyle:{
+                            normal:{
+                                color:'#ffa300'
+                            }
+                        }
+                    },
+                        {
+                            value: jsonData[z].peace,
+                            name:'平',
+                            itemStyle:{
+                                normal:{
+                                    color:'#ffffce'
+                                }
+                            }
+                        },
+                        {
+                            value: jsonData[z].Japanese,
+                            name:'日本',
+                            itemStyle:{
+                                normal:{
+                                    color:'#5efdff'
+                                }
+                            }
+                        }],
+                    itemStyle:{
+                        normal:{
+                            borderWidth:0.5,
+                            borderColor:'#00264d'
+                        }
+                    }
+                },
+                /* 2仪表盘图，做中间刻度线 1*/
+                {
+                    type: 'gauge',
+                    name: '业务指标',
+                    radius:'10%',
+                    startAngle:'0',
+                    endAngle:'-359.99',
+                    center: ['83%', '70%'],
+                    splitNumber:'100',
+                    pointer:{
+                        show:false
+                    },
+                    title:{
+                        show:false
+                    },
+                    detail: {
+                        show:false
+                    },
+                    data: [{value: 0.1, name: '完成率'}],
+                    axisLine:{
+                        lineStyle: {
+                            color:[[1,new echarts.graphic.LinearGradient(0, 0, 1, 1, [{
+                                offset: 0,
+                                color: '#fffae7'
+                            }, {
+                                offset: 0.5,
+                                color: '#fffeb3'
+                            }, {
+                                offset:1,
+                                color: '#c0ff69'
+                            }])]],
+                            width: 10,
+                            opacity: 1
+                        }
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    splitLine: {
+                        show: true,
+                        length:10,
+                        lineStyle: {
+                            color: '#fbffaa',
+                            width: 1,
+                            type: 'solid',
+                        },
+                    },
+                    axisLabel: {
+                        show: false
+                    }
+                },
+                /* 2外层环形图，展示详细占比 1*/
+                {
+                    name: 'pie',
+                    type: 'pie',
+                    clockWise: false,
+                    startAngle:-270,
+                    radius: ['10%', '13%'],
+                    hoverAnimation: false,
+                    center: ['83%', '70%'],
+                    data: [{
+                        value: jsonData[z].china,
+                        name:'中国',
+                        itemStyle:{
+                            normal:{
+                                color:'#ffa300'
+                            }
+                        }
+                    },
+                        {
+                            value: jsonData[z].peace,
+                            name:'平',
+                            itemStyle:{
+                                normal:{
+                                    color:'#ffffce'
+                                }
+                            }
+                        },
+                        {
+                            value: jsonData[z].Japanese,
+                            name:'日本',
+                            itemStyle:{
+                                normal:{
+                                    color:'#5efdff'
+                                }
+                            }
+                        }],
+                    itemStyle:{
+                        normal:{
+                            borderWidth:0.5,
+                            borderColor:'#00264d'
+                        }
+                    }
+                },
+                /* 3仪表盘图，做中间刻度线 1*/
+                {
+                    type: 'gauge',
+                    name: '业务指标',
+                    radius:'10%',
+                    startAngle:'0',
+                    endAngle:'-359.99',
+                    center: ['91%', '70%'],
+                    splitNumber:'100',
+                    pointer:{
+                        show:false
+                    },
+                    title:{
+                        show:false
+                    },
+                    detail: {
+                        show:false
+                    },
+                    data: [{value: 0.1, name: '完成率'}],
+                    axisLine:{
+                        lineStyle: {
+                            color:[[1,new echarts.graphic.LinearGradient(0, 0, 1, 1, [{
+                                offset: 0,
+                                color: '#f6fdff'
+                            }, {
+                                offset: 0.5,
+                                color: '#9cf7ff'
+                            }, {
+                                offset:1,
+                                color: '#4977ff'
+                            }])]],
+                            width: 10,
+                            opacity: 1
+                        }
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    splitLine: {
+                        show: true,
+                        length:10,
+                        lineStyle: {
+                            color: '#95ffff',
+                            width: 1,
+                            type: 'solid',
+                        },
+                    },
+                    axisLabel: {
+                        show: false
+                    }
+                },
+                /* 3外层环形图，展示详细占比 1*/
+                {
+                    name: 'pie',
+                    type: 'pie',
+                    clockWise: true,
+                    startAngle:-270,
+                    radius: ['10%', '13%'],
+                    hoverAnimation: false,
+                    center: ['91%', '70%'],
+                    data: [{
+                        value: jsonData[z].china,
+                        name:'中国',
+                        itemStyle:{
+                            normal:{
+                                color:'#ffa300'
+                            }
+                        }
+                    },
+                        {
+                            value: jsonData[z].peace,
+                            name:'平',
+                            itemStyle:{
+                                normal:{
+                                    color:'#ffffce'
+                                }
+                            }
+                        },
+                        {
+                            value: jsonData[z].Japanese,
+                            name:'日本',
+                            itemStyle:{
+                                normal:{
+                                    color:'#5efdff'
+                                }
+                            }
+                        }],
+                    itemStyle:{
+                        normal:{
+                            borderWidth:0.5,
+                            borderColor:'#00264d'
+                        }
+                    }
+                },
+
+
+            ]
+        });
+    }
+    console.log(timeDataList);
+    myChart.setOption(option, true);
+    // $("#map").hide();
+    // $("#open").click(function () {
+    //     $("#open").animate({
+    //         "width":'200%',
+    //         "opacity": 0
+    //     },10,function () {
+    //         $("#open").hide();
+    //         $("#map").fadeIn(10);
+    //
+    //         // 使用刚指定的配置项和数据显示图表。
+    //         myChart.setOption(option, true);
+    //     });
+    // });
+</script>
+</body>
+</html>

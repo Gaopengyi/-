@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+   <head>
+       <meta charset="utf-8">
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="height: 100%"></div>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+       <script type="text/javascript">
+var dom = document.getElementById("container");
+var myChart = echarts.init(dom);
+var app = {};
+option = null;
+option = {
+    baseOption:{
+        timeline: {
+            axisType: 'category',
+            orient: 'vertical',
+            autoPlay: true,
+            inverse: true,
+            playInterval: 2500,
+            left: null,
+            right: 20,
+            top: 20,
+            bottom: 20,
+            width: 55,
+            height: null,
+            label: {
+                normal: {
+                    textStyle: {
+                        color: '#999'
+                    }
+                },
+                emphasis: {
+                    textStyle: {
+                        color: '#fff'
+                    }
+                }
+            },
+            symbol: 'none',
+            lineStyle: {
+                color: '#555'
+            },
+            checkpointStyle: {
+                color: '#bbb',
+                borderColor: '#777',
+                borderWidth: 2
+            },
+            controlStyle: {
+                showNextBtn: false,
+                showPrevBtn: false,
+                normal: {
+                    color: '#666',
+                    borderColor: '#666'
+                },
+                emphasis: {
+                    color: '#aaa',
+                    borderColor: '#aaa'
+                }
+            },
+            data: [1,2,3,4,5]
+        },
+        title: [],
+        xAxis: {
+            type: 'category',
+            data: []
+        },
+        yAxis: {
+            type: 'value'
+        },
+        label: [
+            {
+                normal: {
+                    show: true,
+                    position: 'inside',
+                    color: "#000"
+                }
+            }
+        ],
+        legend: [
+
+            {
+                orient: 'vertical',
+                left: 100,
+                bottom: 100,
+                data:['中国总伤亡数','日本总伤亡数']
+            },
+
+        ],
+        series: []
+    },
+    options: [{
+        series: [{
+            data: [720],
+            type: 'line',
+            smooth: true
+        }]
+        },
+        {series: [{
+            data: [720, 632],
+            type: 'line',
+            smooth: true
+}]
+        },
+        {series: [{
+            data: [720, 632, 801],
+            type: 'line',
+            smooth: true
+    }]
+        },
+        {
+            series: [{
+            data: [720, 632, 801, 934],
+            type: 'line',
+            smooth: true
+        }]
+        },
+        {
+            series: [{
+            data: [720, 632, 801, 934, 1490],
+            type: 'line',
+            smooth: true
+            }]
+        }]
+
+};
+option.baseOption.xAxis.data = ['1', '2', '2', '3', '4', '5', '6'];
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+       </script>
+   </body>
+</html>
